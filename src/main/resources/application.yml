@@ -1,0 +1,24 @@
+server:
+  port: 6300
+spring:
+  application:
+    name: zuul-server
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:6008/eureka/
+zuul:
+# http:127.0.0.1:6300/aa/api-a/info
+#  统一前缀
+  prefix: /aa
+#  服务名屏蔽（用户不能通过请求路径指定调用服务）
+  ignored-services: "*"
+  routes:
+    api-a:
+# http:127.0.0.1:6300/api-a/info
+# http:127.0.0.1:6300/eureka-client/info
+      path: /api-a/**
+      service-id: eureka-client
+    api-b:
+      path: /api-b/**
+      service-id: eureka-consumer
