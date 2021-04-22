@@ -6,19 +6,29 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:6008/eureka/
+      # 单机模式
+#      defaultZone: http://localhost:6008/eureka/
+      # 集群模式 with security
+      defaultZone: http://wenky:wenky@localhost:6007/eureka/,http://wenky:wenky@localhost:6008/eureka/,http://wenky:wenky@localhost:6009/eureka/
+
 zuul:
 # http:127.0.0.1:6300/aa/api-a/info
 #  统一前缀
   prefix: /aa
 #  服务名屏蔽（用户不能通过请求路径指定调用服务）
+# "*"表示忽略所有服务的路由映射，并全部采用自定义方式
   ignored-services: "*"
   routes:
     api-a:
-# http:127.0.0.1:6300/api-a/info
-# http:127.0.0.1:6300/eureka-client/info
+# http://127.0.0.1:6300/aa/api-a/info
+# http://127.0.0.1:6300/aa/eureka-client/info 因为ignored-services所以不能用这种方式请求
       path: /api-a/**
       service-id: eureka-client
     api-b:
       path: /api-b/**
       service-id: eureka-consumer
+
+# 禁用过滤器 [filter-name].[filter-type].disable=true
+#  MyFilter:
+#    pre:
+#      disable: true

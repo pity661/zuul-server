@@ -31,7 +31,7 @@ public class MyFilter extends ZuulFilter {
     }
 
     /**
-     * 过滤顺序
+     * 过滤顺序，值越小越早执行
      * @return
      */
     @Override
@@ -40,7 +40,7 @@ public class MyFilter extends ZuulFilter {
     }
 
     /**
-     * 逻辑判断是否过滤
+     * 逻辑判断是否过滤 执行条件，判断过滤器是否被触发
      * @return
      */
     @Override
@@ -48,6 +48,11 @@ public class MyFilter extends ZuulFilter {
         return true;
     }
 
+    /**
+     * 执行具体的过滤动作
+     * @return
+     * @throws ZuulException
+     */
     @Override
     public Object run() throws ZuulException {
         // 自定义实现访问权限功能
