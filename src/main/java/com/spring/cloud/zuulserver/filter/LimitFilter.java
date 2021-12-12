@@ -14,38 +14,41 @@ import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
  * @author: wenky
  * @email: huwenqi@panda-fintech.com
  * @create: 2020-09-24 15:06
- **/
+ */
 public class LimitFilter extends ZuulFilter {
-    private static Logger log = LoggerFactory.getLogger(LimitFilter.class);
-    // 每秒生成两个令牌
-    private static final RateLimiter RATE_LIMITER = RateLimiter.create(2);
+  private static Logger log = LoggerFactory.getLogger(LimitFilter.class);
+  // 每秒生成两个令牌
+  private static final RateLimiter RATE_LIMITER = RateLimiter.create(2);
 
-    @Override
-    public String filterType() {
-        return FilterConstants.PRE_TYPE;
-    }
+  @Override
+  public String filterType() {
+    return FilterConstants.PRE_TYPE;
+  }
 
-    @Override
-    public int filterOrder() {
-        return 0;
-    }
+  @Override
+  public int filterOrder() {
+    return 0;
+  }
 
-    @Override
-    public boolean shouldFilter() {
-        RequestContext context = RequestContext.getCurrentContext();
-        if (!RATE_LIMITER.tryAcquire()) {
-            log.warn("访问量超载");
-            // 指定当前请求未通过过滤
-            context.setSendZuulResponse(false);
-            // 向客户端返回响应码429，请求数量过多
-            context.setResponseStatusCode(429);
-            return false;
-        }
-        return true;
+  @Override
+  public boolean shouldFilter() {
+    RequestContext context = RequestContext.getCurrentContext();
+    if (!RATE_LIMITER.tryAcquire()) {
+      log.warn("访问量超载");
+      // 指定当前请求未通过过滤 ZuulServletFilter::doFilter
+      // RibbonRoutingFilter::shouldFilter routing 设置成false后不会调用具体服务
+      context.setSendZuulResponse(false);
+      // 向客户端返回响应码429，请求数量过多
+      // SendResponseFilter::shouldFilter post
+      // ZuulServletFilter::doFilter::init会初始化response
+      context.setResponseStatusCode(429);
+      return false;
     }
+    return true;
+  }
 
-    @Override
-    public Object run() throws ZuulException {
-        return null;
-    }
+  @Override
+  public Object run() throws ZuulException {
+    return null;
+  }
 }

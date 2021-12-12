@@ -34,6 +34,10 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     // zuul
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-zuul'
+    // zipkin
+    implementation 'org.springframework.cloud:spring-cloud-starter-zipkin'
+    // sleuth 从过滤器中获取到tracer的实例 zipkin中包含了依赖，所以不用引用
+//    implementation 'org.springframework.cloud:spring-cloud-starter-sleuth'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
